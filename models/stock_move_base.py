@@ -18,35 +18,6 @@ class StockMove(models.Model):
         string="Ayudante",
         tracking=False,
     )
-
-    def _sid_prioridad_linea_selection(self):
-        """Intenta reutilizar la selección real del campo Studio x_prioridad_linea.
-
-        - Si existe x_prioridad_linea y tiene selection_ids (Studio), devolvemos exactamente esos valores.
-        - Si no, devolvemos una selección mínima para que el campo sea instalable.
-        """
-        try:
-            fld = self.env["ir.model.fields"].sudo().search(
-                [("model", "=", "stock.move"), ("name", "=", "x_prioridad_linea")],
-                limit=1,
-            )
-            if fld and fld.selection_ids:
-                return [(s.value, s.name) for s in fld.selection_ids.sorted("sequence")]
-        except Exception:
-            _logger.exception("No se pudo leer la selección de x_prioridad_linea desde ir.model.fields")
-
-        _logger.warning(
-            "No se encontraron selection_ids para stock.move.x_prioridad_linea. "
-            "Se usa selección mínima de fallback para permitir instalación."
-        )
-        return [("normal", "Normal"), ("alta", "Alta")]
-
-    sid_prioridad_linea = fields.Selection(
-        selection=_sid_prioridad_linea_selection,
-        string="Prioridad",
-        tracking=False,
-    )
-
     sid_coladas = fields.Char(string="Coladas", tracking=False)
     sid_color = fields.Integer(string="Color", tracking=False)
     sid_item = fields.Char(string="Item", tracking=False)
@@ -61,25 +32,29 @@ class StockMove(models.Model):
 
     # Campos de ubicación heredados del producto (para filtros/searchpanel)
     # (readonly/store porque vienen del producto)
-    sid_pasillo = fields.Selection(
+    sid_pasillo = fields.Many2one (
+        comodel_name="sid.location.option",
         related="product_id.product_tmpl_id.sid_pasillo",
         store=True,
         readonly=True,
         string="Pasillo",
     )
-    sid_alto = fields.Selection(
+    sid_alto = fields.Many2one (
+        comodel_name="sid.location.option",
         related="product_id.product_tmpl_id.sid_alto",
         store=True,
         readonly=True,
         string="Alto",
     )
-    sid_lado = fields.Selection(
+    sid_lado = fields.Many2one (
+        comodel_name="sid.location.option",
         related="product_id.product_tmpl_id.sid_lado",
         store=True,
         readonly=True,
         string="Lado",
     )
-    sid_largo = fields.Selection(
+    sid_largo = fields.Many2one (
+        comodel_name="sid.location.option",
         related="product_id.product_tmpl_id.sid_largo",
         store=True,
         readonly=True,
