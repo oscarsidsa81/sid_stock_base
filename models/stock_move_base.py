@@ -7,29 +7,6 @@ from odoo import api, fields, models
 _logger = logging.getLogger(__name__)
 
 
-class OctSoLineInfo ( models.Model ) :
-    _inherit = "stock.move"
-
-    item = fields.Char (
-        string="Item",
-        compute="_compute_item_sm",
-        store=True,
-        readonly=True,
-    )
-
-    @api.depends (
-        "sale_line_id", "sale_line_id.item",
-        "purchase_line_id", "purchase_line_id.item_edit",
-    )
-    def _compute_item_sm(self) :
-        for line in self :
-            if line.sale_line_id and line.sale_line_id.item :
-                line.item = line.sale_line_id.item
-            elif line.purchase_line_id and line.purchase_line_id.item_edit :
-                line.item = line.purchase_line_id.item_edit
-            else :
-                line.item = False
-
 class StockMove(models.Model):
     _inherit = "stock.move"
 
@@ -39,12 +16,12 @@ class StockMove(models.Model):
     sid_ayudante = fields.Many2one(
         comodel_name="res.users",
         string="Ayudante",
-        tracking=False,
     )
-    sid_coladas = fields.Char(string="Coladas", tracking=False)
-    sid_color = fields.Integer(string="Color", tracking=False)
-    sid_tags_activities = fields.Many2many(
-        comodel_name="x_stock.move.tags",
+    sid_coladas = fields.Char(string="Coladas")
+    sid_color = fields.Integer(string="Color")
+
+    sid_tags_activities = fields.Many2many (
+        comodel_name="sid.stock.move.tag",
         relation="stock_move_sid_tags_rel",
         column1="move_id",
         column2="tag_id",
@@ -81,3 +58,19 @@ class StockMove(models.Model):
         readonly=True,
         string="Largo",
     )
+
+    @api.depends(
+        "product_id",
+        "product_id.product_tmpl_id",
+        "product_id.product_tmpl_id.sid_pasillo",
+        "product_id.product_tmpl_id.sid_alto",
+        "product_id.product_tmpl_id.sid_lado",
+        "product_id.product_tmpl_id.sid_largo",
+    )
+    def _compute_sid_dimensions(self):
+        for m in self:
+            tmpl = m.product_id.product_tmpl_id
+            m.sid_pasillo = tmpl.sid_pasillo if tmpl else False
+            m.sid_alto = tmpl.sid_alto if tmpl else False
+            m.sid_lado = tmpl.sid_lado if tmpl else False
+            m.sid_largo = tmpl.sid_largo if tmpl else False
