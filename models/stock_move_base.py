@@ -7,6 +7,29 @@ from odoo import api, fields, models
 _logger = logging.getLogger(__name__)
 
 
+class OctSoLineInfo ( models.Model ) :
+    _inherit = "oct_so_line_info"
+
+    item = fields.Char (
+        string="Item",
+        compute="_compute_item_sm",
+        store=True,
+        readonly=True,
+    )
+
+    @api.depends (
+        "sale_line_id", "sale_line_id.item",
+        "purchase_line_id", "purchase_line_id.item_edit",
+    )
+    def _compute_item_sm(self) :
+        for line in self :
+            if line.sale_line_id and line.sale_line_id.item :
+                line.item = line.sale_line_id.item
+            elif line.purchase_line_id and line.purchase_line_id.item_edit :
+                line.item = line.purchase_line_id.item_edit
+            else :
+                line.item = False
+
 class StockMove(models.Model):
     _inherit = "stock.move"
 
@@ -20,8 +43,6 @@ class StockMove(models.Model):
     )
     sid_coladas = fields.Char(string="Coladas", tracking=False)
     sid_color = fields.Integer(string="Color", tracking=False)
-    sid_item = fields.Char(string="Item", tracking=False)
-
     sid_tags_activities = fields.Many2many(
         comodel_name="x_stock.move.tags",
         relation="stock_move_sid_tags_rel",
