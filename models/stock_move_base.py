@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class OctSoLineInfo ( models.Model ) :
-    _inherit = "oct_so_line_info"
+    _inherit = "stock.move"
 
     item = fields.Char (
         string="Item",
