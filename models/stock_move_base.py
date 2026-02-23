@@ -6,18 +6,21 @@ from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
-
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    # --- Campos base (sin prefijo x_) ---
     # Nota: si en BD existen campos Studio (x_*) equivalentes, el módulo legacy se encarga de copiar valores.
+    # TODO toma nota para pasar a otro módulo el input de las coladas
+    sid_coladas_masivo = fields.Char(string="Introduce coladas", store=True, help = "Este campo requiere pares de datos 'Colada'/'Cantidad hecha' \n"
+                                                                                    "para realizar entradas mútiples en stock.move.lines de cada stock.move")
+
+    sid_AXI = fields.Char(string="Referencia AXI", readonly=True, related="product_id.product_tmpl_id.sid_AXI", store=True )
 
     sid_ayudante = fields.Many2one(
         comodel_name="res.users",
         string="Ayudante",
     )
-    sid_coladas = fields.Char(string="Coladas")
+    # sid_coladas = fields.Char(string="Coladas") no necesario
     sid_color = fields.Integer(string="Color")
 
     sid_tags_activities = fields.Many2many (
@@ -74,3 +77,13 @@ class StockMove(models.Model):
             m.sid_alto = tmpl.sid_alto if tmpl else False
             m.sid_lado = tmpl.sid_lado if tmpl else False
             m.sid_largo = tmpl.sid_largo if tmpl else False
+
+class StockMoveSidLine(models.Model):
+    _inherit = "stock.move.line"
+
+    desc_picking = fields.Text(string="Desc. en Albarán", readonly=True, tracking=True, related="move_id.description_picking")
+    item = fields.Char(string="Item", stored=True,readonly=True, tracking=True, related="move_id.item")
+    move_demanda = fields.Float(string="Demanda", readonly=True, help="Trae el valor demandado de stock.move", related="move_id.product_uom_qty")
+    familia = fields.Char(string="Familia", store=True, readonly=True, related="product_id.family.display_name")
+    related_purchase = fields.Many2one("purchase.order", string="Compra", store=True, readonly=True, related="move_id.purchase_line_id.order_id")
+    proveedor = fields.Many2one("res.partner", string="Proveedor", stored=True, readonly=True, related="move_id.purchase_line_id.order_id.partner_id")
