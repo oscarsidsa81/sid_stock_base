@@ -14,7 +14,7 @@ class SidStockMoveTag(models.Model):
     _order = "name"
 
     name = fields.Char(required=True, index=True)
-    color = fields.Integer(stored=True)
+    color = fields.Integer(store=True)
     active = fields.Boolean(default=True)
 
     _sql_constraints = [

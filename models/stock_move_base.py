@@ -15,9 +15,7 @@ class StockMove(models.Model):
     # TODO toma nota para pasar a otro módulo el input de las coladas
     sid_coladas_masivo = fields.Char(string="Introduce coladas", store=True, help = "Este campo requiere pares de datos 'Colada'/'Cantidad hecha' \n"
                                                                                     "para realizar entradas mútiples en stock.move.lines de cada stock.move")
-
     sid_AXI = fields.Char(string="Referencia AXI", readonly=True, related="product_id.product_tmpl_id.sid_AXI", store=True )
-
     sid_ayudante = fields.Many2one(
         comodel_name="res.users",
         string="Ayudante",
@@ -84,8 +82,8 @@ class StockMoveSidLine(models.Model):
     _inherit = "stock.move.line"
 
     desc_picking = fields.Text(string="Desc. en Albarán", readonly=True, tracking=True, related="move_id.description_picking")
-    item = fields.Char(string="Item", stored=True,readonly=True, tracking=True, related="move_id.item")
+    item = fields.Char(string="Item", store=True,readonly=True, tracking=True, related="move_id.item")
     move_demanda = fields.Float(string="Demanda", readonly=True, help="Trae el valor demandado de stock.move", related="move_id.product_uom_qty")
     family = fields.Char(string="Familia", store=True, readonly=True, related="product_id.family.display_name")
     related_purchase = fields.Many2one("purchase.order", string="Compra", store=True, readonly=True, related="move_id.purchase_line_id.order_id")
-    proveedor = fields.Many2one("res.partner", string="Proveedor", stored=True, readonly=True, related="move_id.purchase_line_id.order_id.partner_id")
+    proveedor = fields.Many2one("res.partner", string="Proveedor", store=True, readonly=True, related="move_id.purchase_line_id.order_id.partner_id")

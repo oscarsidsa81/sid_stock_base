@@ -6,11 +6,11 @@ class StockPicking(models.Model):
     sid_asignado = fields.Many2one("res.users", string="Asignado", help="Campo para asociar un usuario a completar el albarán")
     sid_completado = fields.Boolean(string="Completado", help="Se utiliza para indicar que el albarán continuará con el alcance parcial definido en ese momento")
     sid_enviar = fields.Boolean(string="Enviar", help="Campo para indicar que está listo para enviar, y permite emitir un albarán al chatter con el botón Agencias PDF")
-    sid_modifica = fields.Text(string="Modifica", stored=True, tracking=True)
+    sid_modifica = fields.Text(string="Modifica", store=True, tracking=True)
     pedido_cliente = fields.Char(string="Cliente", store=True, readonly=True, related="sale_id.client_order_ref")
     sid_cliente = fields.Many2one(string="Cliente", store=True, tracking=True, readonly=True, comodel_name="res.partner", related="sale_id.partner_id")
     sid_motivo = fields.Text(string="Motivo", help="Campo para describir el motivo de una devolución")
-    sid_motivo_requerido = fields.Boolean(string="Boleano de Motivo", compute="_compute_sid_motivo_requerido", store=False)
+    sid_motivo_requerido = fields.Boolean(string="Boleano de Motivo", compute="_compute_motivo_required", store=False)
     sid_pagina_final = fields.Boolean(string="Página final", help="Campo que al estar activo muestra la hoja resumen final del PDF de Albarán" )
     sid_address = fields.Text(string="Dirección de Entrega", compute="_compute_sid_address", help="Este campo trae la dirección de entrega del campo partner_id")
     qty_done_pct = fields.Float(string="Progreso Picking", readonly=True, help="Muestra el % de sid_hecho vs sid_demandada", compute="_compute_sid_qty_done")
@@ -119,7 +119,7 @@ class StockPicking(models.Model):
     @api.depends ( "move_lines.picking_id", "move_lines.quantity_done")
     def _compute_sid_qty_done (self) :
         for record in self :
-            if record.state != 'done' or record.state != 'draft' :
+            if record.state not in ('done', 'draft','cancel'):
                 sid_hecho = (round ( sum ( self.env['stock.move'].search (
                     [('picking_id', "=", record.id), ] ).mapped (
                     'quantity_done' ) ), 2 ))
