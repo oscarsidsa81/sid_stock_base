@@ -124,3 +124,65 @@ Campos funcionales para gestión operativa de albaranes:
 ## Seguridad
 
 Incluye permisos básicos en:
+
+---
+
+## Migracion de datos legacy
+
+Este modulo define la estructura final en codigo, pero no ejecuta automaticamente la migracion de datos historicos desde campos Studio (`x_*`).
+
+Para migrar esos datos existe el fichero:
+
+`sql/backfill_sid_stock_base.sql`
+
+### Cuando ejecutarlo
+
+Debe ejecutarse unicamente:
+
+1. despues de instalar `sid_stock_base`
+2. despues de comprobar que las columnas `sid_*` ya existen
+3. antes de eliminar los campos `x_*`
+
+### Que hace
+
+Copia los siguientes campos:
+
+#### `stock.picking`
+- `x_asignado -> sid_asignado`
+- `x_completado -> sid_completado`
+- `x_enviar -> sid_enviar`
+- `x_modifica -> sid_modifica`
+- `x_motivo -> sid_motivo`
+- `x_pagina_final -> sid_pagina_final`
+
+#### `stock.move`
+- `x_ayudante -> sid_ayudante`
+
+### Que no hace
+
+No migra automaticamente:
+
+- campos related
+- campos calculados por relaciones
+- otros campos `x_*` que no tengan destino real en `sid_stock_base`
+
+### Orden recomendado
+
+1. actualizar codigo del modulo
+2. actualizar lista de apps
+3. instalar `sid_stock_base`
+4. ejecutar `sql/backfill_sid_stock_base.sql`
+5. revisar validaciones finales
+6. solo despues plantear limpieza de Studio
+
+### Ejecucion manual del SQL
+
+El fichero SQL se guarda dentro del modulo para dejar trazabilidad y versionado, pero **Odoo no lo ejecuta automaticamente**.
+
+Se puede lanzar, por ejemplo, con `psql`:
+
+```bash
+psql -h <host> -U <usuario> -d <base_de_datos> -f /ruta/addons/sid_stock_base/sql/backfill_sid_stock_base.sql
+```
+
+Tambien puede ejecutarse por bloques desde DBeaver, pgAdmin u otra herramienta SQL. Se recomienda ejecutar primero los `SELECT` de validacion, luego los `UPDATE` y finalmente las validaciones posteriores.

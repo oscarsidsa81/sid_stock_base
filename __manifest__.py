@@ -5,6 +5,7 @@
   "author": "oscarsidsa81",
   "category": "Inventory/Inventory",
   "depends": ["stock", "mail", "sale_stock", "purchase_stock", "oct_so_line_info" ,"sid_product_base", "oct_product_extra_fields"],
+  "data": [],
   "license": "LGPL-3",
   "installable": True,
   "application": False,
