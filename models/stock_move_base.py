@@ -47,21 +47,7 @@ class StockMove(models.Model):
         string="Largo",
     )
 
-    @api.depends(
-        "product_id",
-        "product_id.product_tmpl_id",
-        "product_id.product_tmpl_id.sid_pasillo",
-        "product_id.product_tmpl_id.sid_alto",
-        "product_id.product_tmpl_id.sid_lado",
-        "product_id.product_tmpl_id.sid_largo",
-    )
-    def _compute_sid_dimensions(self):
-        for m in self:
-            tmpl = m.product_id.product_tmpl_id
-            m.sid_pasillo = tmpl.sid_pasillo if tmpl else False
-            m.sid_alto = tmpl.sid_alto if tmpl else False
-            m.sid_lado = tmpl.sid_lado if tmpl else False
-            m.sid_largo = tmpl.sid_largo if tmpl else False
+
 
 # class StockMoveSidLine(models.Model): TODO hay que ver meter esto en un módulo individual aparte
 #     _inherit = "stock.move.line"
