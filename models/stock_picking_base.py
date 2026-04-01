@@ -3,7 +3,7 @@ from odoo import api, fields, models
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    sid_asignado = fields.Many2one("res.users", string="Asignado", help="Campo para asociar un usuario a completar el albarán", domain=lambda self: [('department_id', '=', self.env.ref('hr.department_warehouse').id)])
+    sid_asignado = fields.Many2one("res.users", string="Asignado", help="Campo para asociar un usuario a completar el albarán", domain=lambda self: [('department_id', '=', self.env.ref('hr.department.warehouse').id)])
     sid_completado = fields.Boolean(string="Completado", help="Se utiliza para indicar que el albarán continuará con el alcance parcial definido en ese momento")
     sid_enviar = fields.Boolean(string="Enviar", help="Campo para indicar que está listo para enviar, y permite emitir un albarán al chatter con el botón Agencias PDF")
     sid_modifica = fields.Text(string="Modifica", store=True, tracking=True)
