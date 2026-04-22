@@ -89,9 +89,6 @@ Campos funcionales para gestión operativa de albaranes:
 - `sid_enviar`  
   Flag para indicar que el albarán está listo para enviar.
 
-- `sid_modifica`  
-  Campo de seguimiento para modificaciones.
-
 - `pedido_cliente`  
   Referencia de pedido del cliente (related).
 
@@ -103,12 +100,6 @@ Campos funcionales para gestión operativa de albaranes:
 
 - `sid_motivo_requerido`  
   Campo calculado que obliga a indicar motivo en devoluciones.
-
-- `sid_pagina_final`  
-  Indica si se debe mostrar la página final en el PDF del albarán.
-
-- `sid_address`  
-  Dirección de entrega calculada a partir del partner.
 
 - `qty_done_pct`  
   Porcentaje de progreso del picking.
@@ -153,7 +144,6 @@ Copia los siguientes campos:
 - `x_enviar -> sid_enviar`
 - `x_modifica -> sid_modifica`
 - `x_motivo -> sid_motivo`
-- `x_pagina_final -> sid_pagina_final`
 
 #### `stock.move`
 - `x_ayudante -> sid_ayudante`

@@ -6,13 +6,10 @@ class StockPicking(models.Model):
     sid_asignado = fields.Many2one("res.users", string="Asignado", help="Campo para asociar un usuario a completar el albarán", domain=lambda self: [('department_id', '=', self.env.ref('hr.department_warehouse').id)])
     sid_completado = fields.Boolean(string="Completado", help="Se utiliza para indicar que el albarán continuará con el alcance parcial definido en ese momento")
     sid_enviar = fields.Boolean(string="Enviar", help="Campo para indicar que está listo para enviar, y permite emitir un albarán al chatter con el botón Agencias PDF")
-    sid_modifica = fields.Text(string="Modifica", store=True, tracking=True)
-    pedido_cliente = fields.Char(string="Cliente", store=True, readonly=True, related="sale_id.client_order_ref")
+    pedido_cliente = fields.Char(string="Ref. Pedido", store=True, readonly=True, related="sale_id.client_order_ref")
     sid_cliente = fields.Many2one(string="Cliente", store=True, tracking=True, readonly=True, comodel_name="res.partner", related="sale_id.partner_id")
     sid_motivo = fields.Text(string="Motivo", help="Campo para describir el motivo de una devolución")
     sid_motivo_requerido = fields.Boolean(string="Boleano de Motivo", compute="_compute_motivo_required", store=False)
-    sid_pagina_final = fields.Boolean(string="Página final", help="Campo que al estar activo muestra la hoja resumen final del PDF de Albarán" )
-    sid_address = fields.Text(string="Dirección de Entrega", compute="_compute_sid_address", help="Este campo trae la dirección de entrega del campo partner_id")
     qty_done_pct = fields.Float(string="Progreso Picking", readonly=True, help="Muestra el % de sid_hecho vs sid_demandada", compute="_compute_sid_qty_done")
     is_return = fields.Boolean(compute="_compute_is_return", store=False)
     sid_scope_summary = fields.Text(string="Resumen de Alcance", compute="_compute_sid_scope_summary", store=False, readonly=True)
@@ -91,30 +88,6 @@ class StockPicking(models.Model):
                     rec.state not in ("draft", "done", "cancel")
                     and rec.is_return is True
             )
-
-    @api.depends (
-        "partner_id",
-        "partner_id.street",
-        "partner_id.street2",
-        "partner_id.city",
-        "partner_id.state_id",
-        "partner_id.zip",
-    )
-    def _compute_sid_address(self) :
-        for picking in self :
-            partner = picking.partner_id
-            if partner :
-                address_parts = [
-                    partner.street,
-                    partner.street2,
-                    partner.city,
-                    partner.state_id.name,
-                    partner.zip,
-                ]
-                picking.sid_address = "\n".join (
-                    [p for p in address_parts if p] )
-            else :
-                picking.sid_address = ""
 
     @api.depends ( "move_lines.picking_id", "move_lines.quantity_done")
     def _compute_sid_qty_done (self) :

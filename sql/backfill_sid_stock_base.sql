@@ -49,11 +49,6 @@ FROM stock_picking
 WHERE x_motivo IS NOT NULL
   AND (sid_motivo IS NULL OR sid_motivo = '');
 
-SELECT count(*) AS pending_sid_pagina_final
-FROM stock_picking
-WHERE x_pagina_final IS NOT NULL
-  AND sid_pagina_final IS NULL;
-
 SELECT count(*) AS pending_sid_ayudante
 FROM stock_move
 WHERE x_ayudante IS NOT NULL
@@ -87,11 +82,6 @@ UPDATE stock_picking
 SET sid_motivo = x_motivo
 WHERE x_motivo IS NOT NULL
   AND (sid_motivo IS NULL OR sid_motivo = '');
-
-UPDATE stock_picking
-SET sid_pagina_final = x_pagina_final
-WHERE x_pagina_final IS NOT NULL
-  AND sid_pagina_final IS NULL;
 
 -- =========================================================
 -- 3. MIGRACION stock.move
@@ -130,11 +120,6 @@ SELECT count(*) AS remaining_sid_motivo
 FROM stock_picking
 WHERE x_motivo IS NOT NULL
   AND (sid_motivo IS NULL OR sid_motivo = '');
-
-SELECT count(*) AS remaining_sid_pagina_final
-FROM stock_picking
-WHERE x_pagina_final IS NOT NULL
-  AND sid_pagina_final IS NULL;
 
 SELECT count(*) AS remaining_sid_ayudante
 FROM stock_move
