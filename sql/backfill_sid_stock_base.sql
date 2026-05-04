@@ -39,11 +39,6 @@ FROM stock_picking
 WHERE x_enviar IS NOT NULL
   AND sid_enviar IS NULL;
 
-SELECT count(*) AS pending_sid_modifica
-FROM stock_picking
-WHERE x_modifica IS NOT NULL
-  AND (sid_modifica IS NULL OR sid_modifica = '');
-
 SELECT count(*) AS pending_sid_motivo
 FROM stock_picking
 WHERE x_motivo IS NOT NULL
@@ -72,11 +67,6 @@ UPDATE stock_picking
 SET sid_enviar = x_enviar
 WHERE x_enviar IS NOT NULL
   AND sid_enviar IS NULL;
-
-UPDATE stock_picking
-SET sid_modifica = x_modifica
-WHERE x_modifica IS NOT NULL
-  AND (sid_modifica IS NULL OR sid_modifica = '');
 
 UPDATE stock_picking
 SET sid_motivo = x_motivo
@@ -110,11 +100,6 @@ SELECT count(*) AS remaining_sid_enviar
 FROM stock_picking
 WHERE x_enviar IS NOT NULL
   AND sid_enviar IS NULL;
-
-SELECT count(*) AS remaining_sid_modifica
-FROM stock_picking
-WHERE x_modifica IS NOT NULL
-  AND (sid_modifica IS NULL OR sid_modifica = '');
 
 SELECT count(*) AS remaining_sid_motivo
 FROM stock_picking
